@@ -27,7 +27,7 @@ load_dotenv()
 
 
 def convert_user_question_to_dict(prompt):
-    os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+    os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
     user_input = prompt
     completions = openai.Completion.create(
         engine="text-davinci-003",
