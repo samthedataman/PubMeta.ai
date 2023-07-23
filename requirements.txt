@@ -46,4 +46,5 @@ urllib3==1.26.15
 yarl==1.8.2
 streamlit
 streamlit_chat
+plotly
 git+https://github.com/streamlit/files-connection
