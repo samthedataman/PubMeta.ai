@@ -3,11 +3,13 @@
 
 # But not these files...
 !.gitignore
+!.streamlit
 !*.py
 !*.ipynb
 !chronic_conditions.json
 !gcp_keys.json
 !openaikeys.json
+!pages
 
 # Ignore everything in merged_faiss_index and all chroma files and folders
 merged_faiss_index/index.pkl
