@@ -1,0 +1,19 @@
+# Ignore everything
+*
+
+# But not these files...
+!.gitignore
+!*.py
+!*.ipynb
+!chronic_conditions.json
+!gcp_keys.json
+!openaikeys.json
+
+# Ignore everything in merged_faiss_index and all chroma files and folders
+merged_faiss_index/index.pkl
+merged_faiss_index/index.faiss
+**/chroma_*
+
+# Ignore two largest files
+chroma_db.ipynb
+vector_pinecone.ipynb
