@@ -46,7 +46,7 @@ urllib3==1.26.15
 yarl==1.8.2
 streamlit
 streamlit_chat
-streamlit-nested-layout==23.2.1
+streamlit-nested-layout
 google-cloud-bigquery
 plotly
 git+https://github.com/streamlit/files-connection
