@@ -51,4 +51,5 @@ streamlit_chat
 streamlit-nested-layout
 google-cloud-bigquery
 plotly
+openai
 git+https://github.com/streamlit/files-connection
