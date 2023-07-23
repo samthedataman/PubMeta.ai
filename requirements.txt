@@ -53,4 +53,5 @@ google-cloud-bigquery
 plotly
 openai
 habanero
+regex
 git+https://github.com/streamlit/files-connection
