@@ -54,6 +54,7 @@ streamlit_chat
 streamlit-nested-layout
 google-cloud-bigquery
 plotly
+tiktoken
 openai
 habanero
 fuzzywuzzy
