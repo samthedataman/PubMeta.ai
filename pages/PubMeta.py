@@ -12,7 +12,6 @@ from google.cloud import bigquery
 from google.oauth2 import service_account
 from langchain.chains import ConversationalRetrievalChain
 import streamlit_nested_layout
-import chromadb
 from langchain.vectorstores import Chroma
 from langchain import PromptTemplate
 
@@ -38,6 +37,7 @@ from langchain.prompts.chat import SystemMessagePromptTemplate
 from dotenv import load_dotenv
 import os
 import langchain
+
 # load .env file
 load_dotenv()
 
@@ -220,7 +220,7 @@ def chat_bot_streamlit_openai():
             default_text,
             key="full_user_question_key_when_using_tabs",
         )
-        
+
     enter_button = st.button("Click to chat with PubMeta")
     st.balloons()
 
