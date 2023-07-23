@@ -27,8 +27,8 @@ from google.cloud import storage
 from google.oauth2 import service_account
 import numpy as np
 
-openai.api_key = os.getenv("OPEN_API_KEY")
-os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+# openai.api_key = os.getenv("OPEN_API_KEY")
+os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 
 def load_faiss_from_gcs(bucket_name, index_name, embeddings):
@@ -69,7 +69,7 @@ def init_memory():
 
 
 def retreive_best_answer(full_user_question: str):
-    os.environ['OPENAI_API_KEY'] = st.secrets['OPENAI_API_KEY']
+    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
     progress_text = "Operation in progress. Please wait."
 
     progress_bar = st.progress(value=0, text=progress_text)
