@@ -188,8 +188,7 @@ credentials = service_account.Credentials.from_service_account_info(
 @st.cache_data
 def get_unique_diseases():
     project_name = "airflow-test-371320"
-    key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
-    creds = service_account.Credentials.from_service_account_file(key_path)
+    # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
     )
@@ -206,8 +205,7 @@ def get_unique_diseases():
 @st.cache_data
 def get_unique_treatment():
     project_name = "airflow-test-371320"
-    key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
-    creds = service_account.Credentials.from_service_account_file(key_path)
+    # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
 
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
@@ -225,8 +223,7 @@ def get_unique_treatment():
 @st.cache_data
 def get_treatments_for_diseases(diseases=None):
     project_name = "airflow-test-371320"
-    key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
-    creds = service_account.Credentials.from_service_account_file(key_path)
+    # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
 
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
@@ -264,7 +261,7 @@ def get_disease_by_treatment_data(diseases, treatments):
         treatments = treatments
     project_name = "airflow-test-371320"
     key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
-    creds = service_account.Credentials.from_service_account_file(key_path)
+    # creds = service_account.Credentials.from_service_account_file(key_path)
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
     )

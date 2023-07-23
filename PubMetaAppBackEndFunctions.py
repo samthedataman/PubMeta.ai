@@ -178,8 +178,8 @@ def stringify_columns(df):
 def get_condition_treatments_for_pubmed_from_STW(query):
     # Instantiate a client object using credentials
     project_name = "airflow-test-371320"
-    key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
-    creds = Credentials.from_service_account_file(key_path)
+    # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
+    # creds = Credentials.from_service_account_file(key_path)
 
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
@@ -212,9 +212,9 @@ def upload_to_bq(df):
     dataset_name = "PubMeta"
     table_id = f"{dataset_name}.Articles_PubMed_July_2nd_base"
 
-    creds = service_account.Credentials.from_service_account_file(
-        "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
-    )
+    # creds = service_account.Credentials.from_service_account_file(
+    #     "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
+    # )
 
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
