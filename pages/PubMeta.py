@@ -118,12 +118,19 @@ def chat_bot_streamlit_openai():
                 "Disease-specific-Risk-Factors",
                 "Experimental-Treatments-Insights",
             ],
-            index=0,
+            index=5,
         )
+
+    input_treatment_type = st.sidebar.selectbox(
+        f"↳View Beneficial OR Detrimental Treatments",
+        ["Beneficial", "Detrimental"],
+        key="treatment_type",
+        index=0,
+    )
 
     input_treatment = st.sidebar.multiselect(
         f"↳Treatment Compare Tool",
-        get_treatments_for_diseases(input_disease),
+        get_treatments_for_diseases(input_disease, input_treatment_type),
         key="treatment_sidebar",
     )
     if not input_treatment:
@@ -227,7 +234,9 @@ def chat_bot_streamlit_openai():
     ###Customer Journey 1 Step 2: They have used drop downs and now are searching for the data/answers from the chat bot
     if ((input_disease and input_treatment) or (input_disease)) and enter_button:
         # get query based on user input
-        df = get_disease_by_treatment_data(input_disease, input_treatment)
+        df = get_disease_by_treatment_data(
+            input_disease, input_treatment, input_treatment_type
+        )
         # get similar results from db
 
         search_response, search_history_outchain = retreive_best_answer(
@@ -268,8 +277,11 @@ def chat_bot_streamlit_openai():
         st.subheader(f"Top Treatments for :orange[{str(input_disease[0])}]")
     else:
         st.subheader("Pick a Condition above to start your analysis")
-    panel_df = get_disease_by_treatment_data(input_disease, input_treatment)
-    display_treatments_metrics(panel_df, input_disease)
+    panel_df = get_disease_by_treatment_data(
+        input_disease, input_treatment, input_treatment_type
+    )
+
+    display_treatments_metrics(panel_df, input_disease, input_treatment_type)
 
 
 # Start timer

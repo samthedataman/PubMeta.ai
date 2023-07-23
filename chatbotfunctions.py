@@ -131,7 +131,7 @@ def retreive_best_answer(full_user_question: str):
         progress_bar.progress(i + 1)
 
     qa = ConversationalRetrievalChain.from_llm(
-        ChatOpenAI(temperature=0.1, model="gpt-3.5-turbo-16k"),
+        ChatOpenAI(temperature=0.1),
         vectordb.as_retriever(search_kwargs=dict(k=3)),
         memory=init_memory(),
         combine_docs_chain_kwargs={"prompt": prompt_doc},
@@ -203,7 +203,7 @@ def get_unique_diseases():
 
 
 @st.cache_data
-def get_unique_treatment():
+def get_unique_treatment(TreatmentType):
     project_name = "airflow-test-371320"
     # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
 
@@ -213,7 +213,8 @@ def get_unique_treatment():
     client = bigquery.Client(credentials=credentials, project=project_name)
     query = f"""SELECT treatment
     FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
-    where Disease_STW is not NULL"""
+    where Disease_STW is not NULL
+    and TreatmentType in ("{TreatmentType}")  """
     query_job = client.query(query)
     results = query_job.result().to_dataframe()
     treatments = [d for d in results["treatment"].unique()]
@@ -221,7 +222,7 @@ def get_unique_treatment():
 
 
 @st.cache_data
-def get_treatments_for_diseases(diseases=None):
+def get_treatments_for_diseases(diseases, TreatmentType):
     project_name = "airflow-test-371320"
     # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
 
@@ -232,9 +233,18 @@ def get_treatments_for_diseases(diseases=None):
     # if diseases has been selected by user split them up and inject back into query to get disease specific treatments for users
     if diseases:
         placeholders = ", ".join(f'"{d}"' for d in diseases)
-        query = f"""SELECT distinct treatment
-        FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
-          where Disease_STW in ({placeholders}) and rankings != 0 """
+
+        if TreatmentType == "Benefical":
+            query = f"""SELECT distinct treatment
+            FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
+            where Disease_STW in ({placeholders}) and TreatmentType in ("{TreatmentType}") 
+            """
+        else:
+            query = f"""SELECT distinct treatment
+            FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
+            where Disease_STW in ({placeholders}) and most_detrimental > 0
+            """
+
         query_job = client.query(query)
         results = query_job.result().to_dataframe()
         DiseaseTreatments = [d for d in results["treatment"].unique()]
@@ -252,7 +262,7 @@ def get_treatments_for_diseases(diseases=None):
 ###user reltated reports
 ###triggers
 ####comoro
-def get_disease_by_treatment_data(diseases, treatments):
+def get_disease_by_treatment_data(diseases, treatments, TreatmentType):
     if not diseases and not treatments:
         diseases = ""
         treatments = ""
@@ -260,7 +270,7 @@ def get_disease_by_treatment_data(diseases, treatments):
         diseases = diseases
         treatments = treatments
     project_name = "airflow-test-371320"
-    key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
+    # key_path = "/Users/samsavage/PythonProjects/PubMedGPT/data/gcp_creds.json"
     # creds = service_account.Credentials.from_service_account_file(key_path)
     credentials = service_account.Credentials.from_service_account_info(
         st.secrets["gcp_service_account"]
@@ -275,7 +285,10 @@ def get_disease_by_treatment_data(diseases, treatments):
         query = f"""SELECT *
         FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
         where Disease_STW in ({udiseases})
-          and treatment in ({utreatments})"""
+          and treatment in ({utreatments})
+          and TreatmentType in ("{TreatmentType}")"""
+
+        # st.write(query)
 
         query_job = client.query(query)
 
@@ -285,23 +298,32 @@ def get_disease_by_treatment_data(diseases, treatments):
         udiseases = ", ".join(f'"{d}"' for d in diseases)
 
         query = f"""SELECT *
-        FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW` where Disease_STW in ({udiseases})"""
+        FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
+                 where Disease_STW in ({udiseases})
+                  and TreatmentType in ("{TreatmentType}") """
 
+        # st.write(query)
         query_job = client.query(query)
         results = query_job.result().to_dataframe()
 
-    if treatments:
-        utreatments = ", ".join(f'"{t}"' for t in treatments)
+    # if treatments:
+    #     utreatments = ", ".join(f'"{t}"' for t in treatments)
 
-        query = f"""SELECT *
-        FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW` where treatment in ({utreatments})"""
+    #     query = f"""SELECT *
+    #     FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW` where treatment in ({utreatments})
+    #               and TreatmentType in ("{TreatmentType}")
+    #               """
+    #     st.write(query)
 
-        query_job = client.query(query)
-        results = query_job.result().to_dataframe()
+    #     query_job = client.query(query)
+    #     results = query_job.result().to_dataframe()
 
     else:
         query = f"""SELECT *
-        FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`"""
+        FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW` where TreatmentType in ("{TreatmentType}")"""
+
+        # st.write(query)
+
         query_job = client.query(query)
         results = query_job.result().to_dataframe()
 
@@ -322,7 +344,7 @@ def search_documents(df: pd.DataFrame, full_user_question: str):
     return docs[0].page_content
 
 
-def display_treatments_metrics(df, disease_list=None):
+def display_treatments_metrics(df, disease_list, TreatmentType):
     st.markdown(
         """
         <style>
@@ -347,15 +369,24 @@ def display_treatments_metrics(df, disease_list=None):
         unsafe_allow_html=True,
     )
     if not disease_list:
-        df = df[~df["most_effective_rank"].isin([0])]
-        df = df.sort_values(by="most_effective_rank", ascending=True)
-        df = df.head(100)
+        if TreatmentType == "Detrimental":
+            df = df[df["most_detrimental"] > 0]
+            df = df.sort_values(by="most_detrimental", ascending=True)
+        else:
+            df = df[df["most_effective_rank"] > 0]
+            df = df.sort_values(by="most_effective_rank", ascending=True)
+            df = df.head(100)
 
         treatment_list = df["DiseaseTreatment"].unique().tolist()
 
         num_treatments = len(treatment_list)
         metrics_per_row = min(3, num_treatments)  # Set the maximum columns per row
-        num_containers = math.ceil(num_treatments / metrics_per_row)
+        if metrics_per_row != 0:
+            num_containers = math.ceil(num_treatments / metrics_per_row)
+        else:
+            num_containers = (
+                0  # or any value you consider appropriate in this situation
+            )
 
         treatment_index = 0
         for _ in range(num_containers):
@@ -671,16 +702,22 @@ def display_treatments_metrics(df, disease_list=None):
                                     )
                         treatment_index += 1
     else:
-        df = df[~df["most_effective_rank"].isin([0])]
         df = df[df["Disease_STW"].isin(disease_list)]
 
-        df = df.sort_values(by="most_effective_rank", ascending=True)
+        if TreatmentType == "Detrimental":
+            df = df[df["most_detrimental"] > 0]
+            df = df.sort_values(by="most_detrimental", ascending=True)
+        else:
+            df = df[df["most_effective_rank"] > 0]
+            df = df.sort_values(by="most_effective_rank", ascending=True)
 
         treatment_list = df["treatment"].unique().tolist()
 
         num_treatments = len(treatment_list)
         metrics_per_row = min(3, num_treatments)  # Set the maximum columns per row
-        num_containers = math.ceil(num_treatments / metrics_per_row)
+
+        if metrics_per_row != 0:
+            num_containers = math.ceil(num_treatments / metrics_per_row)
 
         treatment_index = 0
         for _ in range(num_containers):
