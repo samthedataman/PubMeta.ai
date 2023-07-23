@@ -54,4 +54,5 @@ plotly
 openai
 habanero
 regex
+torch
 git+https://github.com/streamlit/files-connection
