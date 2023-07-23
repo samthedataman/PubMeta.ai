@@ -32,8 +32,8 @@ os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 
 def load_faiss_from_gcs(bucket_name, index_name, embeddings):
-    credentials = service_account.Credentials.from_service_account_file(
-        "/Users/samsavage/PythonProjects/PubMetai/data/gcp_keys.json"
+    credentials = service_account.Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"]
     )
     client = storage.Client(credentials=credentials)
     bucket = client.bucket(bucket_name)
