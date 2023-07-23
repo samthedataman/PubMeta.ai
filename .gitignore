@@ -11,7 +11,9 @@
 !openaikeys.json
 !pages
 !requirements.txt
-
+!src
+!PubMedScrapers
+!stuffthatworks
 # Ignore everything in merged_faiss_index and all chroma files and folders
 merged_faiss_index/index.pkl
 merged_faiss_index/index.faiss
