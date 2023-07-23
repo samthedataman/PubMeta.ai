@@ -16,7 +16,7 @@ google-cloud-storage
 frozenlist==1.3.3
 google-cloud==0.34.0
 idna==3.4
-langchain==0.0.137
+langchain==0.0.240
 langchainplus-sdk==0.0.20
 llama-cpp-python==0.1.56
 loguru==0.7.0
