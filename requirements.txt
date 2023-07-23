@@ -55,4 +55,5 @@ openai
 habanero
 regex
 torch
+transformers
 git+https://github.com/streamlit/files-connection
