@@ -21,7 +21,6 @@ from PubMetaAppBackEndFunctions import *
 import pandas as pd
 import streamlit as st
 import openai
-import openai
 from fuzzywuzzy import fuzz
 from langchain.vectorstores import FAISS
 from google.cloud import storage
@@ -72,7 +71,7 @@ def retreive_best_answer(full_user_question: str):
     openai.api_key = os.getenv("OPEN_API_KEY")
     progress_text = "Operation in progress. Please wait."
 
-    progress_bar = st.progress(value=0,text=progress_text)
+    progress_bar = st.progress(value=0, text=progress_text)
 
     for i in range(10):
         time.sleep(0.01)

@@ -10,6 +10,7 @@ chromadb
 dataclasses-json==0.5.7
 pymed
 dnspython==2.3.0
+faiss
 frozenlist==1.3.3
 google-cloud==0.34.0
 idna==3.4
@@ -53,6 +54,7 @@ google-cloud-bigquery
 plotly
 openai
 habanero
+fuzzywuzzy
 regex
 torch
 transformers
