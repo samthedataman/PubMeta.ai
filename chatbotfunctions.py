@@ -131,7 +131,7 @@ def retreive_best_answer(full_user_question: str):
         progress_bar.progress(i + 1)
 
     qa = ConversationalRetrievalChain.from_llm(
-        ChatOpenAI(temperature=0.1),
+        ChatOpenAI(temperature=0.1, model="gpt-4"),
         vectordb.as_retriever(search_kwargs=dict(k=3)),
         memory=init_memory(),
         combine_docs_chain_kwargs={"prompt": prompt_doc},
