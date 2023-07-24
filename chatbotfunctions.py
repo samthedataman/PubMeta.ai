@@ -288,7 +288,7 @@ def get_disease_by_treatment_data(diseases, treatments, TreatmentType):
           and treatment in ({utreatments})
           and TreatmentType in ("{TreatmentType}")"""
 
-        st.write(query)
+        # st.write(query)
 
         query_job = client.query(query)
 
