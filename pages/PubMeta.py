@@ -128,6 +128,17 @@ def chat_bot_streamlit_openai():
         index=0,
     )
 
+    if not input_treatment_type:
+        input_treatment_type = ""
+
+    if "input_treatment_type" not in st.session_state:
+        st.session_state.input_treatment_type = False
+
+    if input_treatment or st.session_state.input_disease:
+        st.session_state.input_treatment_type = True
+    else:
+        input_treatment_type = ""
+
     input_treatment = st.sidebar.multiselect(
         f"↳Treatment Compare Tool",
         get_treatments_for_diseases(input_disease, input_treatment_type),
