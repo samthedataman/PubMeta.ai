@@ -45,9 +45,16 @@ load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
+@st.cache_data
+def get_vbd():
+    embeddings = OpenAIEmbeddings()
+    vector_db  = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
+    return embeddings,vector_db
 
 # @st.cache_data(experimental_allow_widgets=True)
 def chat_bot_streamlit_openai():
+    embeddings,vector_db =get_vbd()
+
     st.set_page_config(
         page_title="PubMeta.ai",
         page_icon="⚕️",
@@ -247,7 +254,7 @@ def chat_bot_streamlit_openai():
         # get similar results from db
 
         search_response, search_history_outchain = retreive_best_answer(
-            full_user_question
+            full_user_question,embeddings,vectordb
         )
         # for i in range(100):
         # # Increment progress bar

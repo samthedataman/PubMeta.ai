@@ -27,7 +27,6 @@ from google.cloud import storage
 from google.oauth2 import service_account
 import numpy as np
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-
 # openai.api_key = os.getenv("OPEN_API_KEY")
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
@@ -69,7 +68,7 @@ def init_memory():
     )
 
 
-def retreive_best_answer(full_user_question: str):
+def retreive_best_answer(full_user_question: str,embeddings,vectordb):
     os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
     progress_text = "Operation in progress. Please wait."
 
@@ -79,9 +78,9 @@ def retreive_best_answer(full_user_question: str):
         time.sleep(0.01)
         progress_bar.progress(i + 1)
 
-    embeddings = OpenAIEmbeddings()
+    embeddings = embeddings
 
-    vectordb = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
+    vectordb = vectordb
 
     prompt_template_doc = """ 
 
@@ -132,12 +131,8 @@ def retreive_best_answer(full_user_question: str):
         progress_bar.progress(i + 1)
 
     qa = ConversationalRetrievalChain.from_llm(
-        ChatOpenAI(
-            streaming=True,
-            callbacks=[StreamingStdOutCallbackHandler()],
-            temperature=0,
-            model="gpt-4",
-        ),
+        ChatOpenAI(streaming=True,
+                   callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-4"),
         vectordb.as_retriever(search_kwargs=dict(k=3)),
         memory=init_memory(),
         combine_docs_chain_kwargs={"prompt": prompt_doc},
