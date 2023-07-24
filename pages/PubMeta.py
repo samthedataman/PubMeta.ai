@@ -45,15 +45,17 @@ load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
+
 @st.cache_data
 def get_vbd():
     embeddings = OpenAIEmbeddings()
-    vector_db  = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
-    return embeddings,vector_db
+    vector_db = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
+    return embeddings, vector_db
+
 
 # @st.cache_data(experimental_allow_widgets=True)
 def chat_bot_streamlit_openai():
-    embeddings,vector_db =get_vbd()
+    embeddings, vector_db = get_vbd()
 
     st.set_page_config(
         page_title="PubMeta.ai",
@@ -140,7 +142,6 @@ def chat_bot_streamlit_openai():
 
     if "input_treatment_type" not in st.session_state:
         st.session_state.input_treatment_type = False
-
 
     input_treatment = st.sidebar.multiselect(
         f"↳Treatment Compare Tool",
@@ -254,7 +255,7 @@ def chat_bot_streamlit_openai():
         # get similar results from db
 
         search_response, search_history_outchain = retreive_best_answer(
-            full_user_question,embeddings,vectordb
+            full_user_question, embeddings, vector_db
         )
         # for i in range(100):
         # # Increment progress bar
