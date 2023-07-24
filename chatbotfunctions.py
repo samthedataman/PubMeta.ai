@@ -288,7 +288,7 @@ def get_disease_by_treatment_data(diseases, treatments, TreatmentType):
           and treatment in ({utreatments})
           and TreatmentType in ("{TreatmentType}")"""
 
-        # st.write(query)
+        st.write(query)
 
         query_job = client.query(query)
 
@@ -344,7 +344,7 @@ def search_documents(df: pd.DataFrame, full_user_question: str):
     return docs[0].page_content
 
 
-def display_treatments_metrics(df, disease_list, TreatmentType):
+def display_treatments_metrics(df, disease_list, TreatmentType, treatments=None):
     st.markdown(
         """
         <style>
@@ -701,7 +701,359 @@ def display_treatments_metrics(df, disease_list, TreatmentType):
                                         unsafe_allow_html=True,
                                     )
                         treatment_index += 1
-    else:
+    if disease_list and treatments:
+        df = df[
+            (df["Disease_STW"].isin(disease_list)) & (df["treatment"].isin(treatments))
+        ]
+        if TreatmentType == "Detrimental":
+            df = df[df["most_detrimental"] > 0]
+            df = df.sort_values(by="most_detrimental", ascending=True)
+        else:
+            df = df[df["most_effective_rank"] > 0]
+            df = df.sort_values(by="most_effective_rank", ascending=True)
+
+        treatment_list = df["treatment"].unique().tolist()
+
+        num_treatments = len(treatment_list)
+        metrics_per_row = min(3, num_treatments)  # Set the maximum columns per row
+
+        if metrics_per_row != 0:
+            num_containers = math.ceil(num_treatments / metrics_per_row)
+
+        treatment_index = 0
+        for _ in range(num_containers):
+            with st.container():
+                cols = st.columns(metrics_per_row)
+                for metric_index in range(metrics_per_row):
+                    if treatment_index < num_treatments:
+                        # Filter the DataFrame for records associated with this treatment
+                        treatment = treatment_list[treatment_index]
+
+                        treatment_data = df[df["treatment"] == treatment].fillna(0)
+
+                        ranking = treatment_data["most_effective_rank"].iloc[0]
+
+                        ranking_bad = treatment_data["most_detrimental"].iloc[0]
+                        side_effects = treatment_data["side_effects"].iloc[0]
+                        member_reports = treatment_data["member_reports"].iloc[0]
+                        list_of_brand_names = treatment_data[
+                            "list_of_brand_names"
+                        ].iloc[0]
+                        combined_with_treatments = treatment_data[
+                            "combined_with_treatments"
+                        ].iloc[0]
+                        number_of_other_treatment_counts = treatment_data[
+                            "number_of_other_treatment_counts"
+                        ].iloc[0]
+                        most_tried_rank = treatment_data["most_tried_rank"].iloc[0]
+                        most_effective_rank = treatment_data[
+                            "most_effective_rank"
+                        ].iloc[0]
+                        most_detrimental = treatment_data["most_detrimental"].iloc[0]
+                        highest_ranked_treatment = treatment_data[
+                            "highest_ranked_treatment"
+                        ].iloc[0]
+                        most_tried_treatment = treatment_data[
+                            "most_tried_treatment"
+                        ].iloc[0]
+                        most_effective_treatment = treatment_data[
+                            "most_effective_treatment"
+                        ].iloc[0]
+                        most_detrimental_treatment = treatment_data[
+                            "most_detrimental_treatment"
+                        ].iloc[0]
+                        member_reports_int = treatment_data["member_reports_int"].iloc[
+                            0
+                        ]
+                        effectiveness_reports_detrimental_percentage_float = (
+                            treatment_data[
+                                "effectiveness_reports_detrimental_percentage_float"
+                            ].iloc[0]
+                        )
+                        extremely_well = treatment_data["extremely_well"].iloc[0]
+                        very_well = treatment_data["very_well"].iloc[0]
+                        fairly_well = treatment_data["fairly_well"].iloc[0]
+                        non_significant = treatment_data["non_significant"].iloc[0]
+                        User_Reported_Data_Links = treatment_data[
+                            "User_Reported_Data_Links"
+                        ].iloc[0]
+                        Disease = treatment_data["Disease"].iloc[0]
+                        Treatment_PubMeta = treatment_data["Treatment_PubMeta"].iloc[0]
+                        DiseaseTreatments = treatment_data["DiseaseTreatments"].iloc[0]
+                        LatestStudyTitle = treatment_data["LatestStudyTitle"].iloc[0]
+                        LatestStudyLink = treatment_data["LatestStudyLink"].iloc[0]
+                        LatestStudyPubDate = treatment_data["LatestStudyPubDate"].iloc[
+                            0
+                        ]
+                        MostCitedStudyTitle = treatment_data[
+                            "MostCitedStudyTitle"
+                        ].iloc[0]
+                        MostCitedStudyLink = treatment_data["MostCitedStudyLink"].iloc[
+                            0
+                        ]
+                        MostCitationCountDiseaseTreatment = treatment_data[
+                            "MostCitationCountDiseaseTreatment"
+                        ].iloc[0]
+                        AvgCitationCountDiseaseTreatment = treatment_data[
+                            "AvgCitationCountDiseaseTreatment"
+                        ].iloc[0]
+                        StudyCountDiseaseTreatment = treatment_data[
+                            "StudyCountDiseaseTreatment"
+                        ].iloc[0]
+                        # continue from previous code...
+
+                        with cols[metric_index]:
+                            with st.expander(
+                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_list[0])}",
+                                expanded=True,
+                            ):
+                                st.markdown(
+                                    f"<h3 style='text-align: center;'>{treatment}</h3>",
+                                    unsafe_allow_html=True,
+                                )
+                                with st.expander("Treatment Brand Names"):
+                                    st.write(list_of_brand_names)
+
+                                with st.expander("Treatment Metrics"):
+                                    st.metric(
+                                        label="Number of User Reports",
+                                        value=(member_reports_int),
+                                    )
+
+                                    st.metric(
+                                        label="Most Tried Rank",
+                                        value=(most_tried_rank),
+                                    )
+                                    st.metric(
+                                        label="Most Effective Rank",
+                                        value=(most_effective_rank),
+                                    )
+                                    st.metric(
+                                        label="Most Detrimental Rank",
+                                        value=(most_detrimental),
+                                    )
+
+                                    st.metric(
+                                        label="% who Found Detrimental",
+                                        value=(
+                                            str(
+                                                round(
+                                                    effectiveness_reports_detrimental_percentage_float
+                                                    * 100
+                                                )
+                                            )
+                                            + "%"
+                                        ),
+                                    )
+                                    st.metric(
+                                        label="Other Conditions Using Treatment",
+                                        value=(number_of_other_treatment_counts),
+                                    )
+
+                                with st.expander("Treatment Effectiveness"):
+                                    # Create a DataFrame for the bubble chart
+                                    df_effectiveness = pd.DataFrame(
+                                        {
+                                            "Effectiveness": [
+                                                "Extremely Well",
+                                                "Very Well",
+                                                "Fairly Well",
+                                                "Non Significant",
+                                            ],
+                                            "Percentages": [
+                                                extremely_well,
+                                                very_well,
+                                                fairly_well,
+                                                non_significant,
+                                            ],
+                                        }
+                                    )
+
+                                    # Sort the DataFrame by Percentages in descending order
+                                    df_effectiveness = df_effectiveness.sort_values(
+                                        "Percentages", ascending=False
+                                    )
+
+                                    # Add size attribute for bubble chart
+                                    df_effectiveness["Size"] = (
+                                        df_effectiveness["Percentages"] * 100
+                                    )  # Scaling factor, adjust accordingly
+
+                                    # Create the Plotly figure
+                                    fig = px.scatter(
+                                        df_effectiveness,
+                                        y="Percentages",
+                                        x="Effectiveness",
+                                        size="Size",  # Size of the bubble is determined by percentages
+                                        title="Treatment Effectiveness",
+                                        color="Percentages",
+                                        color_continuous_scale="blues",
+                                    )
+
+                                    # Customize the layout
+                                    fig.update_layout(
+                                        yaxis_title="Percentages",
+                                        xaxis_title="Effectiveness",
+                                        showlegend=False,  # Hide the legend
+                                    )
+
+                                    fig.update_traces(
+                                        text=df_effectiveness["Percentages"],
+                                        textposition="top center",
+                                    )
+
+                                    # Display the Plotly figure
+                                    st.plotly_chart(fig, use_container_width=True)
+
+                                with st.expander("Side Effects"):
+                                    # Extract the side effects and percentages using regular expression
+                                    matches = re.findall(
+                                        r"(\d+(\.\d+)?)%\s+(.+)", side_effects
+                                    )
+                                    data = [
+                                        (float(match[0]), match[2]) for match in matches
+                                    ]
+
+                                    # Create a DataFrame from the extracted data
+                                    df_side_effects = pd.DataFrame(
+                                        data, columns=["Percentage", "Side Effect"]
+                                    )
+
+                                    # Sort the DataFrame by percentage in descending order
+                                    df_side_effects = df_side_effects.sort_values(
+                                        by="Percentage", ascending=True
+                                    )
+
+                                    fig = px.bar(
+                                        df_side_effects,
+                                        x="Percentage",
+                                        y="Side Effect",
+                                        orientation="h",
+                                        title="Side Effects",
+                                        color="Percentage",
+                                        color_continuous_scale="reds",
+                                    )
+
+                                    fig.update_traces(
+                                        textposition="outside",  # Position the labels inside the bars
+                                    )
+
+                                    fig.update_layout(
+                                        height=500,
+                                        xaxis_title="Percentage",
+                                        yaxis_title="Side Effect",
+                                    )
+
+                                    # Display the Plotly figure
+                                    st.plotly_chart(fig, use_container_width=True)
+                                with st.expander(
+                                    "Member Reports and Combined Treatments"
+                                ):
+                                    st.write(
+                                        f"""Member Reports:
+                                            \n{member_reports}"""
+                                    )
+                                    st.write(
+                                        f"""Combined with Other Treatments:
+                                            \n{combined_with_treatments}"""
+                                    )
+                                with st.expander("Studies"):
+                                    # query = f"""SELECT
+                                    #             DiseaseTreatments,
+                                    #             publication_date,
+                                    #             COUNT(DISTINCT title) NewStudies,
+                                    #             ROUND(AVG(SAFE_CAST(CitationCounts AS int)),0) AS AvgCitationCount
+                                    #             FROM
+                                    #             `airflow-test-371320.PubMeta.ArticleCombine11k`
+                                    #             GROUP BY
+                                    #             1,
+                                    #             2
+                                    #             HAVING disease IN ({udiseases})
+                                    #             ORDER BY
+                                    #             1,
+                                    #             2,
+                                    #             3 DESC """
+
+                                    # query_job = client.query(query)
+
+                                    # results = query_job.result().to_dataframe()
+                                    # Display the number of studies
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Number of Studies</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<p style='font-size: 12px;'>{StudyCountDiseaseTreatment}</p>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    # Display other metrics with smaller text
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Latest Study Title</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<p style='font-size: 12px;'>{LatestStudyTitle}</p>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Latest Study Link</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<a href='{LatestStudyLink}' style='font-size: 12px;'>{LatestStudyLink}</a>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Latest Study Publication Date</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<p style='font-size: 12px;'>{LatestStudyPubDate}</p>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Most Cited Study Title</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<p style='font-size: 12px;'>{MostCitedStudyTitle}</p>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Most Cited Study Link</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<a href='{MostCitedStudyLink}' style='font-size: 12px;'>{MostCitedStudyLink}</a>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Most Cited Study Count</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<p style='font-size: 12px;'>{MostCitationCountDiseaseTreatment}</p>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                                    st.markdown(
+                                        "<h4 style='font-size: 14px;'>Average Citation Count Disease Treatment</h4>",
+                                        unsafe_allow_html=True,
+                                    )
+                                    st.markdown(
+                                        f"<p style='font-size: 12px;'>{AvgCitationCountDiseaseTreatment}</p>",
+                                        unsafe_allow_html=True,
+                                    )
+
+                        treatment_index += 1
+
+    elif disease_list and len(treatments) < 2:
         df = df[df["Disease_STW"].isin(disease_list)]
 
         if TreatmentType == "Detrimental":

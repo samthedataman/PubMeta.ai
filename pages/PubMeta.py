@@ -281,7 +281,9 @@ def chat_bot_streamlit_openai():
         input_disease, input_treatment, input_treatment_type
     )
 
-    display_treatments_metrics(panel_df, input_disease, input_treatment_type)
+    display_treatments_metrics(
+        panel_df, input_disease, input_treatment_type, input_treatment
+    )
 
 
 # Start timer
