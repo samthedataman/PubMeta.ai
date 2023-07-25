@@ -61,4 +61,5 @@ fuzzywuzzy
 regex
 torch
 transformers
+streamlit_searchbox
 git+https://github.com/streamlit/files-connection
