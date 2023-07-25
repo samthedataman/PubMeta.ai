@@ -27,6 +27,7 @@ from google.cloud import storage
 from google.oauth2 import service_account
 import numpy as np
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+
 # openai.api_key = os.getenv("OPEN_API_KEY")
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
@@ -68,7 +69,7 @@ def init_memory():
     )
 
 
-def retreive_best_answer(full_user_question: str,embeddings,vectordb):
+def retreive_best_answer(full_user_question: str, embeddings, vectordb):
     os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
     progress_text = "Operation in progress. Please wait."
 
@@ -94,32 +95,33 @@ def retreive_best_answer(full_user_question: str,embeddings,vectordb):
                 3) If you dont understand which condition/treatment/disease patient is asking about ask them! 
 
                 OPTION MENU: [
-                1) Most-Cited-Study: Identify the disease and return the most cited study for the queried disease, providing a hyperlink to the study, the study's ranking, and related user-reported side effects and comorbidities. Provide links in hyperlink form if present.
-                2) Popular-Treatment-Report: Identify the disease and share the most effective treatments for it based on user reports and scientific studies. Provide links in hyperlink form if present.
-                3) Database-Knowledge-Enumeration: Enumerate the most popular conditions, treatments, or diseases available in our database. Provide links in hyperlink form if present.
-                4) Detailed-Treatment-Information: Identify the treatment and present extensive details about it, including its brand names, most cited studies related to it, user reports, treatment ranking, and related comorbidities. Provide links in hyperlink form if present.
-                5) Detailed-Disease-Information: Identify the disease and offer comprehensive details about it, including a description based on user reports, symptoms, top 5 treatments, and top 5 comorbidities. Provide links in hyperlink form if present.
-                6) Specific-Study-Insights: Identify the study and elucidate its details, comparing it with user reports. Provide links in hyperlink form if present.
-                7) General-Disease-Treatment-Overview: In case of generic queries, provide an overview of diseases and treatments available in our database. Provide links in hyperlink form if present.
-                8) User-Report-Summary: Present user-reported information about conditions, triggers, comorbidities, symptoms, treatments, and treatment side effects. Provide links in hyperlink form if present.
-                9) New-Treatment-Options: Identify the disease and present details about recent and emerging treatments for it, referencing scientific studies and user reports. Provide links in hyperlink form if present.
-                10) Statistically-Significant-Treatments: Identify the disease and highlight treatments that have demonstrated statistically significant results in scientific studies related to it. Provide links in hyperlink form if present.
-                11) User-Intensive-Treatment-Options: Identify the disease and highlight treatments that have the most user-reported data, emphasizing experiences, side effects, and effectiveness. Provide links in hyperlink form if present.
-                12) Prognosis-Information: Identify the disease and offer an overview of its typical course and progression, citing both scientific studies and user reports. Provide links in hyperlink form if present.
-                13) Side-Effects-Information: Identify the treatment and provide detailed information about potential side effects for it, citing both scientific studies and user reports. Provide links in hyperlink form if present.
-                14) Personalized-Treatment-Information: Identify the disease and provide detailed treatment information tailored to the user's specific condition, symptoms, or comorbidities. Provide links in hyperlink form if present.
-                15) Treatment-Procedure-Details: Identify the treatment and explain the procedure, administration, or regimen involved with it. Provide links in hyperlink form if present.
-                16) Disease-Progression-Information: Identify the disease and provide information on how it might progress over time, backed by scientific studies and user reports. Provide links in hyperlink form if present.
-                17) Lifestyle-Modification-Suggestions: Identify the disease and suggest lifestyle modifications that might help manage it, supported by scientific studies and user reports. Provide links in hyperlink form if present.
-                18) Hereditary-Risk-Insights: Identify the disease and offer information on potential hereditary or genetic risks associated with it, based on scientific studies. Provide links in hyperlink form if present.
-                19) Diagnostic-Tests-Details: Identify the disease and detail diagnostic tests typically used to identify it, along with their effectiveness and availability. Provide links in hyperlink form if present.
-                20) Disease-Prevention-Strategies: Identify the disease and share preventative measures and strategies for it, according to scientific studies and user reports. Provide links in hyperlink form if present.
-                21) Vaccine-Information: Identify the disease and offer information on available vaccines for it, detailing their effectiveness and potential side effects based on scientific studies and user reports. Provide links in hyperlink form if present.
-                22) Complementary-Therapies-Insights: Identify the disease and present information on complementary or alternative therapies for it, referencing scientific studies and user reports. Provide links in hyperlink form if present.
-                23) Age-Related-Risks-Information: Identify the disease and offer information on how age may influence the risk, progression, or treatment of it, citing scientific studies and user reports. Provide links in hyperlink form if present.
-                24) Gender-Specific-Information: Identify the disease and provide information about how it may affect individuals differently based on gender, supported by scientific studies and user reports. Provide links in hyperlink form if present.
-                25) Disease-specific-Risk-Factors: Identify the disease and highlight the key risk factors associated with it, as indicated by scientific studies and user reports. Provide links in hyperlink form if present.
-                26) Experimental-Treatments-Insights: Identify the disease and offer insights into experimental treatments for it, including information from scientific studies, clinical trials, and user reports. Provide links in hyperlink form if present]
+                1) 📚 Most-Cited-Study: Identify the disease and return the most cited study for the queried disease, providing a hyperlink to the study, the study's ranking, and related user-reported side effects and comorbidities. Provide links in hyperlink form if present.
+                2) 📈 Popular-Treatment-Report: Identify the disease and share the most effective treatments for it based on user reports and scientific studies. Provide links in hyperlink form if present.
+                3) 📊 Database-Knowledge-Enumeration: Enumerate the most popular conditions, treatments, or diseases available in our database. Provide links in hyperlink form if present.
+                4) 💊 Detailed-Treatment-Information: Identify the treatment and present extensive details about it, including its brand names, most cited studies related to it, user reports, treatment ranking, and related comorbidities. Provide links in hyperlink form if present.
+                5) 🏥 Detailed-Disease-Information: Identify the disease and offer comprehensive details about it, including a description based on user reports, symptoms, top 5 treatments, and top 5 comorbidities. Provide links in hyperlink form if present.
+                6) 🔍 Specific-Study-Insights: Identify the study and elucidate its details, comparing it with user reports. Provide links in hyperlink form if present.
+                7) 🌐 General-Disease-Treatment-Overview: In case of generic queries, provide an overview of diseases and treatments available in our database. Provide links in hyperlink form if present.
+                8) 📝 User-Report-Summary: Present user-reported information about conditions, triggers, comorbidities, symptoms, treatments, and treatment side effects. Provide links in hyperlink form if present.
+                9) 🆕 New-Treatment-Options: Identify the disease and present details about recent and emerging treatments for it, referencing scientific studies and user reports. Provide links in hyperlink form if present.
+                10) 📈 Statistically-Significant-Treatments: Identify the disease and highlight treatments that have demonstrated statistically significant results in scientific studies related to it. Provide links in hyperlink form if present.
+                11) 📝 User-Intensive-Treatment-Options: Identify the disease and highlight treatments that have the most user-reported data, emphasizing experiences, side effects, and effectiveness. Provide links in hyperlink form if present.
+                12) 🕰️ Prognosis-Information: Identify the disease and offer an overview of its typical course and progression, citing both scientific studies and user reports. Provide links in hyperlink form if present.
+                13) ⚠️ Side-Effects-Information: Identify the treatment and provide detailed information about potential side effects for it, citing both scientific studies and user reports. Provide links in hyperlink form if present.
+                14) 👤 Personalized-Treatment-Information: Identify the disease and provide detailed treatment information tailored to the user's specific condition, symptoms, or comorbidities. Provide links in hyperlink form if present.
+                15) 📑 Treatment-Procedure-Details: Identify the treatment and explain the procedure, administration, or regimen involved with it. Provide links in hyperlink form if present.
+                16) 📈 Disease-Progression-Information: Identify the disease and provide information on how it might progress over time, backed by scientific studies and user reports. Provide links in hyperlink form if present.
+                17) 💪 Lifestyle-Modification-Suggestions: Identify the disease and suggest lifestyle modifications that might help manage it, supported by scientific studies and user reports. Provide links in hyperlink form if present.
+                18) 🧬 Hereditary-Risk-Insights: Identify the disease and offer information on potential hereditary or genetic risks associated with it, based on scientific studies. Provide links in hyperlink form if present.
+                19) 🔬 Diagnostic-Tests-Details: Identify the disease and detail diagnostic tests typically used to identify it, along with their effectiveness and availability. Provide links in hyperlink form if present.
+                20) 🛡️ Disease-Prevention-Strategies: Identify the disease and share preventative measures and strategies for it, according to scientific studies and user reports. Provide links in hyperlink form if present.
+                21) 💉 Vaccine-Information: Identify the disease and offer information on available vaccines for it, detailing their effectiveness and potential side effects based on scientific studies and user reports. Provide links in hyperlink form if present.
+                22) 🌿 Complementary-Therapies-Insights: Identify the disease and present information on complementary or alternative therapies for it, referencing scientific studies and user reports. Provide links in hyperlink form if present.
+                23) 👴 Age-Related-Risks-Information: Identify the disease and offer information on how age may influence the risk, progression, or treatment of it, citing scientific studies and user reports. Provide links in hyperlink form if present.
+                24) 👫 Gender-Specific-Information: Identify the disease and provide information about how it may affect individuals differently based on gender, supported by scientific studies and user reports. Provide links in hyperlink form if present.
+                25) ⚠️ Disease-specific-Risk-Factors: Identify the disease and highlight the key risk factors associated with it, as indicated by scientific studies and user reports. Provide links in hyperlink form if present.
+                26) 🔬 Experimental-Treatments-Insights: Identify the disease and offer insights into experimental treatments for it, including information from scientific studies, clinical trials, and user reports. Provide links in hyperlink form if present]
+
                 """
 
     prompt_doc = PromptTemplate(
@@ -131,8 +133,12 @@ def retreive_best_answer(full_user_question: str,embeddings,vectordb):
         progress_bar.progress(i + 1)
 
     qa = ConversationalRetrievalChain.from_llm(
-        ChatOpenAI(streaming=True,
-                   callbacks=[StreamingStdOutCallbackHandler()],temperature=0, model="gpt-4"),
+        ChatOpenAI(
+            streaming=True,
+            callbacks=[StreamingStdOutCallbackHandler()],
+            temperature=0,
+            model="gpt-4",
+        ),
         vectordb.as_retriever(search_kwargs=dict(k=3)),
         memory=init_memory(),
         combine_docs_chain_kwargs={"prompt": prompt_doc},
