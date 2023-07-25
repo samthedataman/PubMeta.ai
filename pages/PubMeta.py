@@ -6,6 +6,8 @@ import os
 from langchain.chat_models import ChatOpenAI
 from langchain.memory import ConversationSummaryBufferMemory
 import plotly.express
+from streamlit_searchbox import st_searchbox
+from typing import List, Tuple
 
 from src.stuffthatworks.StuffThatWorksETL import run_jobs
 from google.cloud import bigquery
@@ -46,11 +48,20 @@ load_dotenv()
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
 
+
 @st.cache_data
 def get_vbd():
     embeddings = OpenAIEmbeddings()
     vector_db = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
     return embeddings, vector_db
+
+
+# function to search diseases
+@st.cache_data
+def search_diseases(searchterm: str):
+    diseases = get_unique_diseases()
+    # filter diseases based on the search term
+    return [d for d in diseases if searchterm.lower() in d.lower()]
 
 
 # @st.cache_data(experimental_allow_widgets=True)
@@ -82,11 +93,21 @@ def chat_bot_streamlit_openai():
     col1, col2 = st.columns(2)
 
     with col1:
-        input_disease = st.multiselect(
-            label="↳Pick a New Condition",
-            options=get_unique_diseases(),
-            default=["ankylosing-spondylitis"],
-        )
+        # input_disease = st_searchbox(
+        #     label="↳Pick a New Condition",
+        #     search_function=search_db(),
+        #     default=["ankylosing-spondylitis"],
+        # )
+
+        input_disease = st_searchbox(
+            search_diseases,
+            "Search a New Condition.....",
+            key="disease_searchbox",
+            label="↳Pick a Condition to Research!")
+
+        # st.write(input_disease)
+
+        # input_disease = "".join([i for i in input_disease])
 
         if not input_disease:
             input_disease = ""
@@ -99,35 +120,34 @@ def chat_bot_streamlit_openai():
     with col2:
         drop_down_options = st.selectbox(
             "↳Pick a Research Topic Chat Injection",
-options = [
-    "📚 Most-Cited-Study",
-    "📈 Popular-Treatment-Report",
-    "📊 Database-Knowledge-Enumeration",
-    "💊 Detailed-Treatment-Information",
-    "🏥 Detailed-Disease-Information",
-    "🔍 Specific-Study-Insights",
-    "🌐 General-Disease-Treatment-Overview",
-    "📝 User-Report-Summary",
-    "🆕 New-Treatment-Options",
-    "📈 Statistically-Significant-Treatments",
-    "📝 User-Intensive-Treatment-Options",
-    "🕰️ Prognosis-Information",
-    "⚠️ Side-Effects-Information",
-    "👤 Personalized-Treatment-Information",
-    "📑 Treatment-Procedure-Details",
-    "📈 Disease-Progression-Information",
-    "💪 Lifestyle-Modification-Suggestions",
-    "🧬 Hereditary-Risk-Insights",
-    "🔬 Diagnostic-Tests-Details",
-    "🛡️ Disease-Prevention-Strategies",
-    "💉 Vaccine-Information",
-    "🌿 Complementary-Therapies-Insights",
-    "👴 Age-Related-Risks-Information",
-    "👫 Gender-Specific-Information",
-    "⚠️ Disease-specific-Risk-Factors",
-    "🔬 Experimental-Treatments-Insights"
-],
-
+            options=[
+                "📚 Most-Cited-Study",
+                "📈 Popular-Treatment-Report",
+                "📊 Database-Knowledge-Enumeration",
+                "💊 Detailed-Treatment-Information",
+                "🏥 Detailed-Disease-Information",
+                "🔍 Specific-Study-Insights",
+                "🌐 General-Disease-Treatment-Overview",
+                "📝 User-Report-Summary",
+                "🆕 New-Treatment-Options",
+                "📈 Statistically-Significant-Treatments",
+                "📝 User-Intensive-Treatment-Options",
+                "🕰️ Prognosis-Information",
+                "⚠️ Side-Effects-Information",
+                "👤 Personalized-Treatment-Information",
+                "📑 Treatment-Procedure-Details",
+                "📈 Disease-Progression-Information",
+                "💪 Lifestyle-Modification-Suggestions",
+                "🧬 Hereditary-Risk-Insights",
+                "🔬 Diagnostic-Tests-Details",
+                "🛡️ Disease-Prevention-Strategies",
+                "💉 Vaccine-Information",
+                "🌿 Complementary-Therapies-Insights",
+                "👴 Age-Related-Risks-Information",
+                "👫 Gender-Specific-Information",
+                "⚠️ Disease-specific-Risk-Factors",
+                "🔬 Experimental-Treatments-Insights",
+            ],
             index=5,
         )
 
@@ -216,16 +236,11 @@ options = [
 
             # st.sidebar.plotly_chart(fig, use_container_width=True)
 
-    ##if there has been a question enterd
-    if "first_run" not in st.session_state:
-        st.session_state["first_run"] = True
-        st.session_state["reset_input"] = False  # Add this line
-
     if input_treatment:
         default_text = (
             ""
             if st.session_state["reset_input"]
-            else f"Hello, can you research {drop_down_options} for {' '.join(input_disease)} combined with treatments such as : {' '.join(input_treatment)}"
+            else f"Hello, can you research {drop_down_options} for {input_disease} combined with treatments such as : {' '.join(input_treatment)}"
         )
         full_user_question = st.text_input(
             "Chat with me!",
@@ -236,13 +251,14 @@ options = [
         default_text = (
             ""
             if st.session_state["reset_input"]
-            else f"Hello, can you research {drop_down_options} for {' '.join(input_disease)}"
+            else f"Hello, can you research {drop_down_options} for {input_disease}"
         )
         full_user_question = st.text_input(
             "Chat with me!",
             default_text,
             key="full_user_question_key_when_using_tabs",
         )
+
 
     enter_button = st.button("Click to chat with PubMeta")
 
@@ -267,35 +283,37 @@ options = [
         #     time.sleep(0.01)
 
         # Clear progress bar
-        st.success("Done!")
-
         # store the output
         st.session_state.past.append(full_user_question)
         st.session_state.generated.append(search_response)
         st.session_state.memory.append(search_history_outchain)
+        
+        # st.subheader(f"Question:",full_user_question)
+
+        # st.write(search_response)
         # st.write(st.session_state["memory"][-1])
 
-        if "first_run" not in st.session_state:
-            st.session_state["first_run"] = True
-            message("Hello! I'm your chatbot. How can I assist you today?")
+        # if "first_run" not in st.session_state:
+        #     st.session_state["first_run"] = True
+        #     message("Hello! I'm your chatbot. How can I assist you today?")
 
-        if st.session_state["generated"]:
-            for i in range(len(st.session_state["generated"]) - 1, -1, -1):
-                message(st.session_state["generated"][i], key=str(i))
+        # if st.session_state["generated"]:
+        #     for i in range(len(st.session_state["generated"]) - 1, -1, -1):
+        #         message(st.session_state["generated"][i], key=str(i))
 
-                message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
+        #         message(st.session_state["past"][i], is_user=True, key=str(i) + "_user")
 
-        if not input_disease or input_treatment:
-            parsed_output = fuzzy_match_with_query(
-                full_user_question,
-                get_unique_diseases(),
-                get_unique_treatment(),
-                score_cutoff=58,
-            )
+        # if not input_disease or input_treatment:
+        #     parsed_output = fuzzy_match_with_query(
+        #         full_user_question,
+        #         get_unique_diseases(),
+        #         get_unique_treatment(),
+        #         score_cutoff=58,
+        #     )
     if input_disease:
-        st.subheader(f"Top Treatments for :orange[{str(input_disease[0])}]")
-    else:
-        st.subheader("Pick a Condition above to start your analysis")
+        st.subheader(f"Top Treatments for :orange[{str(input_disease)}]")
+    # else:
+    #     st.subheader("Pick a Condition above to start your analysis")
     panel_df = get_disease_by_treatment_data(
         input_disease, input_treatment, input_treatment_type
     )
