@@ -54,7 +54,7 @@ def search_diseases(searchterm: str):
     # filter diseases based on the search term
     return [d for d in diseases if searchterm.lower() in d.lower()]
 
-@st.cache_data(ttl=400)
+# @st.cache_data(ttl=400)
 def get_vbd():
     embeddings = OpenAIEmbeddings()
     vector_db = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
