@@ -62,6 +62,8 @@ def chat_bot_streamlit_openai():
         initial_sidebar_state="auto",
     )
 
+    st.header("Pick a New Condition to get started!🚀")
+
     full_user_question = ""
     search_response = ""
 
