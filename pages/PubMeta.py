@@ -278,7 +278,7 @@ def chat_bot_streamlit_openai():
 
     enter_button = st.button("Click to chat with PubMeta")
 
-    st.balloons()
+    # st.balloons()
 
     ###Customer Journey 1 Step 2: They have used drop downs and now are searching for the data/answers from the chat bot
     if ((input_disease and input_treatment) or (input_disease)) and enter_button:
