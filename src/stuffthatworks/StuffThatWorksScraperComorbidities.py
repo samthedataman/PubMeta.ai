@@ -29,7 +29,7 @@ def get_symptoms(condition):
     )
 
     value = condition
-    
+
     driver.get(
         f"https://www.stuffthatworks.health/{value}/comorbidities?tab=MostReported"
     )
@@ -155,7 +155,6 @@ def insert_dataframe_into_table(df):
 
 
 def push_treatment_data_to_gbq():
-
     df = pd.read_csv("/Users/samsavage/PythonProjects/PubMedGPT/full_frame.csv")
 
     print(df.head().T)

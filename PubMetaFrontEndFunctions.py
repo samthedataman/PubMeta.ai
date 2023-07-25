@@ -76,11 +76,11 @@ def def_old_chat():
 
 
 def set_custom_page_config():
-    st.set_page_config(
-        page_title="PubMeta:The home to the most accurate chronic disease treatment analysis tool powered by user reports, pubmed.com, and Openai's GPT Large Langauge Model ",
-        page_icon=":bar_chart:",
-        layout="wide",
-    )
+    # st.set_page_config(
+    #     page_title="PubMeta:The home to the most accurate chronic disease treatment analysis tool powered by user reports, pubmed.com, and Openai's GPT Large Langauge Model ",
+    #     page_icon=":bar_chart:",
+    #     layout="wide",
+    # )
 
     st.markdown(
         """<link href="https://fonts.googleapis.com/css2?family=Major+Mono+Display&family=Xanh+Mono:ital@1&display=swap&family=Roboto:wght@100&display=swap&family=Roboto+Mono:wght@300&display=swap&family=Comfortaa:wght@400;500&family=Roboto+Mono:wght@300&display=swap" rel="stylesheet">""",
