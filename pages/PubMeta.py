@@ -54,22 +54,34 @@ def search_diseases(searchterm: str):
     # filter diseases based on the search term
     return [d for d in diseases if searchterm.lower() in d.lower()]
 
-@st.cache_data
+@st.cache_data(ttl=400)
 def get_vbd():
     embeddings = OpenAIEmbeddings()
     vector_db = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
     return embeddings, vector_db
 
+def set_css(css: str):
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+
+def set_bot_css():
+    css = '''
+    .chatbot {
+        font-size: 20px; 
+    }
+    '''
+    set_css(css)
 
 
 # @st.cache_data(experimental_allow_widgets=True)
 def chat_bot_streamlit_openai():
-    st.set_page_config(
-        page_title="PubMeta.ai",
-        page_icon="⚕️",
-        layout="wide",
-        initial_sidebar_state="auto",
-    )
+    # st.set_page_config(
+    #     page_title="PubMeta.ai",
+    #     page_icon="⚕️",
+    #     layout="wide",
+    #     initial_sidebar_state="auto",
+    # )
+        
+    set_bot_css()
 
     st.header("Pick a New Condition to get started!🚀")
 

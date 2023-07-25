@@ -65,6 +65,19 @@ from typing import Any, List, Dict
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 
+def set_css(css: str):
+    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+
+def set_bot_css():
+    css = '''
+    .chatbot {
+        font-size: 20px; 
+    }
+    '''
+    set_css(css)
+    
+set_bot_css()
+
 class MyStream(StreamingStdOutCallbackHandler):
     def __init__(self) -> None:
         super().__init__()
@@ -82,8 +95,11 @@ class MyStream(StreamingStdOutCallbackHandler):
     def on_llm_new_token(self, token: str, **kwargs: Any) -> None:
         """Run on new LLM token. Only available when streaming is enabled."""
         self.s += token
-        self.o.markdown(f"**{self.s}**")
+        self.o.markdown(f'<p class="chatbot">**{self.s}**</p>', unsafe_allow_html=True)
         time.sleep(0.05)
+
+
+
 
 
 
@@ -116,6 +132,7 @@ def retreive_best_answer(full_user_question: str, embeddings, vectordb):
                 TASK: Respond to the user's question ({question}) regarding the identified conditions, diseases, or treatments.
 
                 REQUIREMENT: Utilize both user-reported data from the StuffThatWorks database and PubMed's scientific articles in your response from chat_history : ({chat_history}) and context: ({context})
+
 
 
 
@@ -202,7 +219,6 @@ def fuzzy_match_with_query(user_search, diseases_list, treatments_list, score_cu
     result = {"Disease": [], "Treatment": []}
 
     for category, keyword_list in combined_list.items():
-        for word in user_search.split():
             if word is not None:
                 for keyword in keyword_list:
                     score = fuzz.ratio(word.lower(), keyword.lower())
@@ -265,7 +281,7 @@ def get_treatments_for_diseases(diseases, TreatmentType):
     client = bigquery.Client(credentials=credentials, project=project_name)
     # if diseases has been selected by user split them up and inject back into query to get disease specific treatments for users
     if diseases:
-        
+
         placeholders = ", ".join(f'"{d}"' for d in diseases)
 
         if TreatmentType == "Benefical":
