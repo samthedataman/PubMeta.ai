@@ -47,7 +47,12 @@ load_dotenv()
 
 os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 
-
+# function to search diseases
+@st.cache_data
+def search_diseases(searchterm: str):
+    diseases = get_unique_diseases()
+    # filter diseases based on the search term
+    return [d for d in diseases if searchterm.lower() in d.lower()]
 
 @st.cache_data
 def get_vbd():
@@ -55,13 +60,6 @@ def get_vbd():
     vector_db = load_faiss_from_gcs("pubmeta", "index", embeddings=embeddings)
     return embeddings, vector_db
 
-
-# function to search diseases
-@st.cache_data
-def search_diseases(searchterm: str):
-    diseases = get_unique_diseases()
-    # filter diseases based on the search term
-    return [d for d in diseases if searchterm.lower() in d.lower()]
 
 
 # @st.cache_data(experimental_allow_widgets=True)
@@ -103,7 +101,9 @@ def chat_bot_streamlit_openai():
             search_diseases,
             "Search a New Condition.....",
             key="disease_searchbox",
-            label="↳Pick a Condition to Research!")
+            label="↳Pick a Condition to Research!",
+            default="adhd-adults",
+        )
 
         # st.write(input_disease)
 
@@ -259,7 +259,6 @@ def chat_bot_streamlit_openai():
             key="full_user_question_key_when_using_tabs",
         )
 
-
     enter_button = st.button("Click to chat with PubMeta")
 
     st.balloons()
@@ -287,7 +286,7 @@ def chat_bot_streamlit_openai():
         st.session_state.past.append(full_user_question)
         st.session_state.generated.append(search_response)
         st.session_state.memory.append(search_history_outchain)
-        
+
         # st.subheader(f"Question:",full_user_question)
 
         # st.write(search_response)

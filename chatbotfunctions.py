@@ -265,6 +265,7 @@ def get_treatments_for_diseases(diseases, TreatmentType):
     client = bigquery.Client(credentials=credentials, project=project_name)
     # if diseases has been selected by user split them up and inject back into query to get disease specific treatments for users
     if diseases:
+        
         placeholders = ", ".join(f'"{d}"' for d in diseases)
 
         if TreatmentType == "Benefical":
