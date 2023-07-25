@@ -139,7 +139,7 @@ def retreive_best_answer(full_user_question: str,embeddings,vectordb):
     )
 
     results = qa({"question": full_user_question})
-    for i in range(80):
+    for i in range(100):
         time.sleep(0.001)
         progress_bar.progress(i + 1)
 

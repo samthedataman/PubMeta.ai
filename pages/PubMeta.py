@@ -55,8 +55,6 @@ def get_vbd():
 
 # @st.cache_data(experimental_allow_widgets=True)
 def chat_bot_streamlit_openai():
-    embeddings, vector_db = get_vbd()
-
     st.set_page_config(
         page_title="PubMeta.ai",
         page_icon="⚕️",
@@ -83,7 +81,7 @@ def chat_bot_streamlit_openai():
 
     with col1:
         input_disease = st.multiselect(
-            label="↳Pick a Condition",
+            label="↳Pick a New Condition",
             options=get_unique_diseases(),
             default=["ankylosing-spondylitis"],
         )
@@ -244,11 +242,14 @@ def chat_bot_streamlit_openai():
         )
 
     enter_button = st.button("Click to chat with PubMeta")
+
     st.balloons()
 
     ###Customer Journey 1 Step 2: They have used drop downs and now are searching for the data/answers from the chat bot
     if ((input_disease and input_treatment) or (input_disease)) and enter_button:
         # get query based on user input
+        embeddings, vector_db = get_vbd()
+
         df = get_disease_by_treatment_data(
             input_disease, input_treatment, input_treatment_type
         )
