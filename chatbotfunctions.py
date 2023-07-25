@@ -852,7 +852,7 @@ def display_treatments_metrics(df, disease_list, TreatmentType, treatments=None)
 
                         with cols[metric_index]:
                             with st.expander(
-                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_list[0])}",
+                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_list)}",
                                 expanded=True,
                             ):
                                 st.markdown(
@@ -1203,7 +1203,7 @@ def display_treatments_metrics(df, disease_list, TreatmentType, treatments=None)
 
                         with cols[metric_index]:
                             with st.expander(
-                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_listg)}",
+                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_list)}",
                                 expanded=True,
                             ):
                                 st.markdown(
