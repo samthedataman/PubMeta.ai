@@ -66,17 +66,20 @@ from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
 
 
 def set_css(css: str):
-    st.markdown(f'<style>{css}</style>', unsafe_allow_html=True)
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
 
 def set_bot_css():
-    css = '''
+    css = """
     .chatbot {
         font-size: 20px; 
     }
-    '''
+    """
     set_css(css)
-    
+
+
 set_bot_css()
+
 
 class MyStream(StreamingStdOutCallbackHandler):
     def __init__(self) -> None:
@@ -97,10 +100,6 @@ class MyStream(StreamingStdOutCallbackHandler):
         self.s += token
         self.o.markdown(f'<p class="chatbot">**{self.s}**</p>', unsafe_allow_html=True)
         time.sleep(0.05)
-
-
-
-
 
 
 @st.cache_resource
@@ -219,11 +218,11 @@ def fuzzy_match_with_query(user_search, diseases_list, treatments_list, score_cu
     result = {"Disease": [], "Treatment": []}
 
     for category, keyword_list in combined_list.items():
-            if word is not None:
-                for keyword in keyword_list:
-                    score = fuzz.ratio(word.lower(), keyword.lower())
-                    if score >= score_cutoff:
-                        result[category].append(keyword)
+        if word is not None:
+            for keyword in keyword_list:
+                score = fuzz.ratio(word.lower(), keyword.lower())
+                if score >= score_cutoff:
+                    result[category].append(keyword)
 
     return result
 
@@ -281,7 +280,6 @@ def get_treatments_for_diseases(diseases, TreatmentType):
     client = bigquery.Client(credentials=credentials, project=project_name)
     # if diseases has been selected by user split them up and inject back into query to get disease specific treatments for users
     if diseases:
-
         placeholders = ", ".join(f'"{d}"' for d in diseases)
 
         if TreatmentType == "Benefical":
@@ -1205,7 +1203,7 @@ def display_treatments_metrics(df, disease_list, TreatmentType, treatments=None)
 
                         with cols[metric_index]:
                             with st.expander(
-                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_list[0])}",
+                                f"Rank: {ranking} - Optimal Treatment Approaches for {str(disease_listg)}",
                                 expanded=True,
                             ):
                                 st.markdown(
