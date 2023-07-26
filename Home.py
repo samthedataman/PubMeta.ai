@@ -1,10 +1,10 @@
 import streamlit as st
 from st_files_connection import FilesConnection
 
-st.set_page_config(
-    page_title="Home",
-    page_icon="👋",
-)
+# st.set_page_config(
+#     page_title="Home",
+#     page_icon="👋",
+# )
 # --- GENERAL SETTINGS ---
 STRIPE_CHECKOUT = "https://buy.stripe.com/test_fZe7tp7St2Hm3QI9AA"
 CONTACT_EMAIL = "YOUREMAIL@EMAIL.COM"

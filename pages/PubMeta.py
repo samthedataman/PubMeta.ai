@@ -116,10 +116,10 @@ def chat_bot_streamlit_openai():
 
         input_disease = st_searchbox(
             search_diseases,
-            "Search a New Condition.....",
+            "Search a New Condition (this may take one second or two).....",
             key="disease_searchbox",
             label="↳Pick a Condition to Research!",
-            default="adhd-adults",
+            default="ankylosing-spondylitis",
         )
 
         # st.write(input_disease)
