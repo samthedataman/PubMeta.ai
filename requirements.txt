@@ -49,7 +49,7 @@ typing-inspect==0.8.0
 typing_extensions==4.5.0
 urllib3==1.26.15
 yarl==1.8.2
-streamlit
+streamlit==1.25.0
 streamlit_chat
 streamlit-nested-layout
 google-cloud-bigquery
