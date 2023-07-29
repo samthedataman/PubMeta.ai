@@ -287,7 +287,7 @@ def chat_bot_streamlit_openai():
             default="ankylosing-spondylitis",
         )
 
-        # st.write(input_disease)
+        st.write(input_disease)
 
         # input_disease = "".join([i for i in input_disease])
 
@@ -428,7 +428,7 @@ def chat_bot_streamlit_openai():
         default_text = (
             ""
             if st.session_state["reset_input"]
-            else f"Hello, can you research {drop_down_options} for {input_disease} combined with treatments such as : {' '.join(input_treatment)}"
+            else f"Hello, can you research {drop_down_options} for {input_disease} combined with treatments such as : {' vs '.join(input_treatment)}"
         )
         full_user_question = st.text_input(
             "Chat with me!",
