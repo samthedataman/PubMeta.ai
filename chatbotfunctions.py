@@ -289,13 +289,14 @@ def get_treatments_for_diseases(diseases, TreatmentType):
             FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
             where Disease_STW in ('{diseases}') and TreatmentType in ("{TreatmentType}") 
             """
-            # st.write(query)
+            st.write(query)
 
         else:
             query = f"""SELECT distinct treatment
             FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
             where Disease_STW in ('{diseases}') and most_detrimental > 0
             """
+            st.write(query)
 
         query_job = client.query(query)
         results = query_job.result().to_dataframe()
