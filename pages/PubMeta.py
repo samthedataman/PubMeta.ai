@@ -303,6 +303,12 @@ def chat_bot_streamlit_openai():
         drop_down_options = st.selectbox(
             "↳Pick a Research Topic Chat Injection",
             options=[
+                "🏥 Compare Treatment Benefits",
+                "🩹 Compare Treatment Side Effects",
+                "📝 Compare Treatment Member Reports",
+                "🚨 Compare Treatment Triggers",
+                "🤕 Compare Treatment Comorbities",
+                "📚 Compare Treatment Studies",
                 "📚 Most-Cited-Study",
                 "📈 Popular-Treatment-Report",
                 "📊 Database-Knowledge-Enumeration",
