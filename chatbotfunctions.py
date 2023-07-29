@@ -280,17 +280,21 @@ def get_treatments_for_diseases(diseases, TreatmentType):
     client = bigquery.Client(credentials=credentials, project=project_name)
     # if diseases has been selected by user split them up and inject back into query to get disease specific treatments for users
     if diseases:
-        placeholders = ", ".join(f'"{d}"' for d in diseases)
+        # placeholders = ", ".join(f'"{d}"' for d in diseases)
+
+        # st.write(diseases)
 
         if TreatmentType == "Benefical":
             query = f"""SELECT distinct treatment
             FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
-            where Disease_STW in ({placeholders}) and TreatmentType in ("{TreatmentType}") 
+            where Disease_STW in ('{diseases}') and TreatmentType in ("{TreatmentType}") 
             """
+            # st.write(query)
+
         else:
             query = f"""SELECT distinct treatment
             FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
-            where Disease_STW in ({placeholders}) and most_detrimental > 0
+            where Disease_STW in ('{diseases}') and most_detrimental > 0
             """
 
         query_job = client.query(query)
