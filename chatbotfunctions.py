@@ -241,12 +241,12 @@ def get_unique_diseases():
         st.secrets["gcp_service_account"]
     )
     client = bigquery.Client(credentials=credentials, project=project_name)
-    query = f"""SELECT Disease_STW
+    query = f"""SELECT distinct Disease_STW
     FROM `airflow-test-371320.DEV.STREAMLIT_CHAT_BOT_VIEW`
-    where Disease_STW is not NULL """
+    where Disease_STW is not NULL"""
     query_job = client.query(query)
     results = query_job.result().to_dataframe()
-    diseases = [d for d in results["Disease_STW"].unique()]
+    diseases = [d for d in results["Disease_STW"]]
     return diseases
 
 
@@ -280,7 +280,6 @@ def get_treatments_for_diseases(diseases, TreatmentType):
     client = bigquery.Client(credentials=credentials, project=project_name)
     # if diseases has been selected by user split them up and inject back into query to get disease specific treatments for users
     if diseases:
-        
         placeholders = ", ".join(f'"{d}"' for d in diseases)
 
         if TreatmentType == "Benefical":
