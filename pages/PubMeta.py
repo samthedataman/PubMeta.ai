@@ -58,7 +58,7 @@ os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
 # function to search diseases
 
 
-@st.cache_data
+# @st.cache_data
 def search_diseases(searchterm: str):
     # diseases = get_unique_diseases()
     diseases = [
