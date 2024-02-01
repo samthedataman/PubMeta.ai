@@ -339,7 +339,7 @@ def get_results_and_predictions(DiseaseTreatments):
         query = f"({disease}[Title/Abstract] AND {treatment}[Title/Abstract])"
         #
         pubmed = PubMed(tool="MyTool", email="razoranalyticsconsulting@gmail.com")
-        my_api_key = "c7cc7e152fff1679a4d539bd35b270803f08"
+        my_api_key = ""
         pubmed.parameters.update({"api_key": my_api_key})
         pubmed._rateLimit = 45
 
