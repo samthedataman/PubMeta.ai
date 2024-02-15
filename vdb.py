@@ -45,6 +45,6 @@ from IPython.display import Markdown
 
 load_dotenv()
 
-os.environ["OPENAI_API_KEY"] = "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"
-os.environ["YOUR-PINECONE-KEY"] = "04067e10-4136-489f-a5e1-91d1f9818598"
-os.environ["YOUR-PINECONE-ENV"] = "us-west4-gcp-free"
+os.environ["OPENAI_API_KEY"]  ="your key here"
+os.environ["YOUR-PINECONE-KEY"] = "your key here"
+os.environ["YOUR-PINECONE-ENV"] ="your key here"
